@@ -32,9 +32,9 @@ TextJustify justify = new TextJustify("kup teraz", 500, someUnityStyle);
 
 void OnGUI() {
 	IEnumerable<TextJustify.WordInfo> words = justify.GetWordsInfo();
-	float xPos = 0;
+	float xPos = 0; //horizontal offset
 	foreach (TextJustify.WordInfo info in words) {
-		Rect rect = new Rect(10, 10, info.width, 30);
+		Rect rect = new Rect(xPos, 10, info.width, 30);
 		GUI.Label(rect, info.word, justify.Style);
 		xPos += info.width + info.nextSpacing;
 	}
