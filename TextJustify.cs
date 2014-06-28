@@ -15,7 +15,7 @@ public class TextJustify {
 			this.nextSpacing = nextSpacing;
 		}
 	}
-	private static Regex boundaries = new Regex(@"\b");
+	private static Regex boundaries = new Regex(@"\s");
 	private float wordSpacing;
 	private string text;
 	private float width;
@@ -66,11 +66,11 @@ public class TextJustify {
 		return cInfos;
 	}
 
-	public float GetWordWidth(string word, Font font) {
+	public float GetWordWidth(string word) {
 		List<CharacterInfo> cInfos = new List<CharacterInfo>();
 		foreach (char chr in word) {
 			CharacterInfo info;
-			font.GetCharacterInfo(chr, out info);
+			Debug.Log(style.font.GetCharacterInfo(chr, out info, style.fontSize, style.fontStyle));
 			cInfos.Add(info);
 		}
 		return cInfos
@@ -84,7 +84,7 @@ public class TextJustify {
 	}
 	
 	public IEnumerable<WordInfo> GetWordsInfo() {
-		return this.words;
+		return words;
 	}
 
 	public float GetTotalWordWidth(IEnumerable<WordInfo> infos) {
@@ -92,13 +92,9 @@ public class TextJustify {
 	}
 
 	public void Recalculate() {
-		List<WordInfo> infos = new List<WordInfo>();
-		IEnumerable<WordInfo> existingInfo = GetWordsInfo();
-		if (existingInfo != null) {
-			infos.AddRange(existingInfo);
-		}
-		wordSpacing = (width - GetTotalWordWidth(infos)) / (infos.Count() - 1);
 		IEnumerable<string> wrds = SplitWords();
-		this.words = wrds.Select((word, i) => new WordInfo(word, GetWordWidth(word, style.font), i == wrds.Count()-1? 0 : wordSpacing));
+		words = wrds.Select<string, WordInfo>((word, i) => new WordInfo(word, GetWordWidth(word), i == wrds.Count()-1? 0 : wordSpacing));
+		Debug.Log(words.Aggregate<WordInfo, string>("",(a, wi) => a+" "+wi.width));
+		wordSpacing = Mathf.Abs((width - GetTotalWordWidth(words)) / (words.Count() - 1));
 	}
 }
