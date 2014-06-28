@@ -84,8 +84,7 @@ public class TextJustify {
 	}
 	
 	public IEnumerable<WordInfo> GetWordsInfo() {
-		IEnumerable<string> wrds = SplitWords();
-		return wrds.Select((word, i) => new WordInfo(word, GetWordWidth(word, style.font), i == wrds.Count()-1? 0 : wordSpacing));
+		return this.words;
 	}
 
 	public float GetTotalWordWidth(IEnumerable<WordInfo> infos) {
@@ -95,5 +94,7 @@ public class TextJustify {
 	public void Recalculate() {
 		List<WordInfo> infos = new List<WordInfo>(GetWordsInfo());
 		wordSpacing = (width - GetTotalWordWidth(infos)) / (infos.Count() - 1);
+		IEnumerable<string> wrds = SplitWords();
+		this.words = wrds.Select((word, i) => new WordInfo(word, GetWordWidth(word, style.font), i == wrds.Count()-1? 0 : wordSpacing));
 	}
 }
