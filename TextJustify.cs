@@ -7,9 +7,10 @@ namespace Kroltan.TextTools.Extensions {
 	public static class GUIExtensions {
 		public static void JustifiedLabel(Vector2 position, TextJustify justify) {
 			IEnumerable<TextJustify.WordInfo> words = justify.GetWordsInfo();
-			float xPos = 0;
+			float xPos = position.x;
+			justify.Recalculate();
 			foreach (TextJustify.WordInfo word in words) {
-				Rect pos = new Rect(position.x+xPos, position.y, word.width, justify.Style.fontSize);
+				Rect pos = new Rect(xPos, position.y, word.width, justify.Style.fontSize);
 				GUI.Label(pos, word.word, justify.Style);
 				xPos += word.width + word.nextSpacing;
 			}
@@ -85,7 +86,7 @@ namespace Kroltan.TextTools {
 			List<CharacterInfo> cInfos = new List<CharacterInfo>();
 			foreach (char chr in word) {
 				CharacterInfo info;
-				Debug.Log(style.font.GetCharacterInfo(chr, out info, style.fontSize, style.fontStyle));
+				style.font.GetCharacterInfo(chr, out info, style.fontSize, style.fontStyle);
 				cInfos.Add(info);
 			}
 			return cInfos
@@ -109,8 +110,7 @@ namespace Kroltan.TextTools {
 		public void Recalculate() {
 			IEnumerable<string> wrds = SplitWords();
 			words = wrds.Select<string, WordInfo>((word, i) => new WordInfo(word, GetWordWidth(word), i == wrds.Count()-1? 0 : wordSpacing));
-			Debug.Log(words.Aggregate<WordInfo, string>("",(a, wi) => a+" "+wi.width));
-			wordSpacing = Mathf.Abs((width - GetTotalWordWidth(words)) / (words.Count() - 1));
+			wordSpacing = (width - GetTotalWordWidth(words)) / (words.Count() - 1);
 		}
 	}
 }
