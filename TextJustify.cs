@@ -92,7 +92,11 @@ public class TextJustify {
 	}
 
 	public void Recalculate() {
-		List<WordInfo> infos = new List<WordInfo>(GetWordsInfo());
+		List<WordInfo> infos = new List<WordInfo>();
+		IEnumerable<WordInfo> existingInfo = GetWordsInfo();
+		if (existingInfo != null) {
+			infos.AddRange(existingInfo);
+		}
 		wordSpacing = (width - GetTotalWordWidth(infos)) / (infos.Count() - 1);
 		IEnumerable<string> wrds = SplitWords();
 		this.words = wrds.Select((word, i) => new WordInfo(word, GetWordWidth(word, style.font), i == wrds.Count()-1? 0 : wordSpacing));
